@@ -32,6 +32,7 @@ Overmind.prototype.getServers = function() {
 
 /**
  * Declare server
+ * @param {Function} logic (see server's constructor)
  * @param {Object|Undefined} params (see server's constructor)
  * @this {Overmind}
  * @return @this
