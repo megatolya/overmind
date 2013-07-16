@@ -1,0 +1,12 @@
+{
+  "name": "overmind",
+  "description": "yet another nodejs framework",
+  "version": "0.1.0",
+  "author": "Anatoliy Ostrovskiy",
+  "dependencies": {
+    "express": "3.x",
+    "jade": "0.28.1",
+    "colors": "~0.6.0-1"
+  },
+  "main": "overmind.js"
+}

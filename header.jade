@@ -1,0 +1,8 @@
+div.navbar
+    div.navbar-inner
+        a.brand='Title'
+            ul.nav
+                - servers.forEach(function(server) {
+                    li
+                        a(href=server.hostname)=server.name
+                - });
