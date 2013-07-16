@@ -19,7 +19,7 @@ module.exports = function(logLevel) {
         }
     };
 
-    function log(level, arguments) {
+    function log(level) {
         if (level >= logLevel) {
             var color,
                 msg;
