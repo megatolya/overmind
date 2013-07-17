@@ -21,7 +21,7 @@ function Overmind() {
      *   30 - info,
      *   40 - warn,
      *   50 - errors
-     * @type {Number}
+     * @type {number}
      */
     this._logLevel = 10;
     this.logger = require('./logger')(this._logLevel);
@@ -56,8 +56,8 @@ Overmind.prototype.getServers = function() {
 
 /**
  * Declare server
- * @param {Function} logic (see server's constructor)
- * @param {Object|Undefined} params (see server's constructor)
+ * @param {function(Server)} logic (see server's constructor)
+ * @param {(Object|undefined)} params (see Server's constructor)
  * @this {Overmind}
  * @return @this
  */
@@ -73,7 +73,7 @@ Overmind.prototype.addServer = function(logic, params) {
 
 /**
  * Generate header html
- * @param {Function} callback
+ * @param {function((Error|null), (string|undefined))} callback
  *    callback is called with error (if any) and html string
  */
 Overmind.prototype.getHeader = function(callback) {

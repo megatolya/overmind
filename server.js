@@ -17,14 +17,8 @@ function getPort() {
 /**
  * @name Server
  * @constructor
- * @param {Function} logic
- * @param {Object|Undefined} params (optional)
- *      name {String}
- *      path {String}
- *      hostname {String|Undefined}
- *      overmind {Object} - link to overmind
- *      inMenu {Boolean} - if false - server will not be in menubar
- *      TODO check args
+ * @param {function(Server)} logic
+ * @param {({name: string, hostname: string, overmind: Object, inMenu: boolean}|undefined)} params
  * @api private
  */
 function Server(logic, params) {
@@ -32,13 +26,13 @@ function Server(logic, params) {
 
     /**
      * server's name
-     * @type {String}
+     * @type {string}
      */
     this.name = params.name;
 
     /**
      * server's hostname
-     * @type {String}
+     * @type {string}
      * for example: "test.localhost", "ololo.ololo.com"
      * TODO @type {Array}
      */
@@ -46,13 +40,13 @@ function Server(logic, params) {
 
     /**
      * server's bussiness logic
-     * @type {Function(server)}
+     * @type {function(server)}
      */
     this.logic = logic;
 
     /**
      * will be in menu or not`
-     * @type {Boolean}
+     * @type {boolean}
      */
     this.inMenu = (params.inMenu !== false);
 
@@ -125,7 +119,7 @@ Server.prototype.start = function() {
 
 /**
  * Declare server's view path
- * @param {String} path
+ * @param {string} path
  * @api public
  */
 Server.prototype.views = function(path) {
