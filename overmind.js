@@ -84,7 +84,7 @@ Overmind.prototype.addServer = function(logic, params) {
 
 /**
  * Generate header html
- * @param {function((Error|null), (string|undefined))} callback
+ * @param {function( (Error|null), (string|undefined) )} callback
  *    callback is called with error (if any) and html string
  */
 Overmind.prototype.getHeader = function(callback) {
@@ -112,6 +112,12 @@ Overmind.prototype.getHeader = function(callback) {
     });
 };
 
+/**
+ * Overriding default port for servers
+ * @param {number} port new port
+ * @this {Overmind}
+ * @return @this
+ */
 Overmind.prototype.port = function(port) {
     this._port = port;
 
