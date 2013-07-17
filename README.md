@@ -10,27 +10,33 @@
 var mind = require('overmind');
 
 // создаем новый сервер
-mind.addServer(/* см. ниже */require('./servers/wiki/wiki.js'), {
-    // любая строка
+// первый аргумент логика сервера
+// второй - опции
+mind.addServer(
+    function(server) {
+        server.get('*', function(req, res) {
+            server.overmind.logger.info('get');
+            res.render('wiki');
+        });
+        // эту строку можно передать в опция сервера через ключ views
+        server.views(require('path').join(__dirname, '/views'));
+    }, {
+    // название (любая строка)
     name: 'miniwiki',
     // реальный веб-адрес сервера
     hostname: 'miniwiki.localhost',
     // можно задать порт самому, но зачем?
     port: 2000,
-    // какие-то глобальные настройки, которые будут нужны другим серверам
-    global: {
-        // там, где нужно, можно выводить меню доступных серверов, этим флагом мы показываем, что данный сервер в меню должен содержаться
-        menuButton: true
-    }
+    // там, где нужно, можно выводить меню доступных серверов
+    // этим флагом мы показываем, что данный сервер в меню не должен содержаться
+    // по умолчанию - содержится
+    menuButton: false
 });
 
 // еще один сервер
 mind.addServer(require('./servers/hello.js'), {
     name: 'helloworld',
-    hostname: 'localhost',
-    global: {
-        menuButton: true
-    }
+    hostname: 'localhost'
 });
 
 // единое логгирование
@@ -42,11 +48,10 @@ mind.start();
 
 Сама логика работы сервера практически ничем не отличается от express:
 ```javascript
-// ./servers/wiki/wiki.js
+// ./servers/hello.js
 
 module.exports = function(server) {
     server.overmind.logger.trace('ololo');
-    server.get('/', function(req, res) { res.render('index', {}); });
-    server.views(require('path').join(__dirname, '/views'));
+    server.get('/', function(req, res) { res.render('index', {some: 'data'}); });
 };
 ```

@@ -58,6 +58,8 @@ function Server(logic, params) {
 
     this.logger = this.overmind.logger;
 
+    params.views && this.views(params.views);
+
     var port = params.port;
     if (port) {
         if (usedPorts.indexOf(port) > -1) {
