@@ -19,7 +19,7 @@ module.exports = function(logLevel) {
         }
     };
 
-    function log(level) {
+    function log(level, args) {
         if (level >= logLevel) {
             var color,
                 msg;
@@ -45,13 +45,13 @@ module.exports = function(logLevel) {
                     msg = 'error';
                     break;
             }
-            for (var key in arguments) {
+            for (var key in args) {
                 key = parseInt(key, 10);
-                arguments[key + 1] = arguments[key];
-                arguments[0] = msg[color];
+                args[key + 1] = args[key];
+                args[0] = msg[color];
             }
-            arguments.length++;
-            console.log.apply(null, arguments);
+            args.length++;
+            console.log.apply(null, args);
         }
     }
 };

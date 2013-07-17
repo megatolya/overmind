@@ -23,7 +23,7 @@ function getPort() {
  *      path {String}
  *      hostname {String|Undefined}
  *      overmind {Object} - link to overmind
- *      global - TODO
+ *      inMenu {Boolean} - if false - server will not be in menubar
  *      TODO check args
  * @api private
  */
@@ -51,18 +51,18 @@ function Server(logic, params) {
     this.logic = logic;
 
     /**
-     * global server's behavior
-     * @type {Object}
-        todo:
-        menuButton: {boolean}
+     * will be in menu or not`
+     * @type {Boolean}
      */
-    this.global = params.global;
+    this.inMenu = (params.inMenu !== false);
 
     /**
      * link to overmind
      * @type {Object}
      */
     this.overmind = params.overmind;
+
+    this.logger = this.overmind.logger;
 
     var port = params.port;
     if (port) {
