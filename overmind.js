@@ -77,7 +77,9 @@ Overmind.prototype.addServer = function(logic, params) {
  *    callback is called with error (if any) and html string
  */
 Overmind.prototype.getHeader = function(callback) {
-    var servers = this.getServers(),
+    var servers = this.getServers().filter(function (server) {
+            if (server.inMenu) return server;
+        }),
         cache = this._cache,
         _this = this;
 
