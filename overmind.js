@@ -2,6 +2,13 @@ var Server = require('./server'),
     logger = require('./logger')(10);
 
 /**
+ * Default port
+ * @const
+ * @type {number}
+ */
+var DEFAULT_PORT = 3000;
+
+/**
  * @name Overmind
  * @constructor
  * @this {Overmind}
@@ -35,12 +42,16 @@ function Overmind() {
  * @return @this
  */
 Overmind.prototype.start = function() {
-    var _this = this;
+    var _this = this,
+        server = require('express')(),
+        evh = require('express-vhost');
 
+    server.use(evh.vhost());
+    server.listen(this._port || DEFAULT_PORT);
     this.logger.trace('starting servers');
     this._servers.forEach(function(server) {
         _this.logger.info('starting server ' + server.name.underline);
-        server.start();
+        server.start(evh);
     });
 
     return this;
@@ -99,6 +110,12 @@ Overmind.prototype.getHeader = function(callback) {
         _this.logger.trace('header compiled');
         callback(null, html);
     });
+};
+
+Overmind.prototype.port = function(port) {
+    this._port = port;
+
+    return this;
 };
 
 /**

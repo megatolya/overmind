@@ -1,17 +1,6 @@
-var portIterator = 3000,
-    usedPorts = [];
 
 function handleError(err) {
     throw err;
-}
-
-function getPort() {
-    portIterator++;
-    if (usedPorts.indexOf(portIterator) > -1)
-        return getPort();
-
-    usedPorts.push(portIterator);
-    return portIterator;
 }
 
 /**
@@ -45,10 +34,10 @@ function Server(logic, params) {
     this.logic = logic;
 
     /**
-     * will be in menu or not`
+     * will be in menu or not
      * @type {boolean}
      */
-    this.inMenu = (params.inMenu !== false);
+    this.inMenu = (typeof params.inMenu !== 'boolean') || params.inMenu;
 
     /**
      * link to overmind
@@ -60,25 +49,15 @@ function Server(logic, params) {
 
     params.views && this.views(params.views);
 
-    var port = params.port;
-    if (port) {
-        if (usedPorts.indexOf(port) > -1) {
-            port = getPort();
-        } else {
-            usedPorts.push(port);
-        }
-    } else {
-        port = getPort();
-    }
-    this._port = port;
     // TODO view path
 }
 
 /**
  * Starting server
+ * @param {Vhost} evh - joins express's app with hostname
  * @api private
  */
-Server.prototype.start = function() {
+Server.prototype.start = function(evh) {
     if (this.__started)
         return;
 
@@ -115,8 +94,7 @@ Server.prototype.start = function() {
     // calling server's logic
     this.logic(this);
 
-    // creating http server
-    require('http').createServer(this.express).listen(this._port);
+    evh.register(this.hostname, this.express);
 };
 
 /**
@@ -144,15 +122,6 @@ Server.prototype.get = function() {
  */
 Server.prototype.post = function() {
     this.express.post.apply(this.express, arguments);
-};
-
-/**
- * Server's port
- * @return {number} port
- * @api public
- */
-Server.prototype.port = function() {
-    return this._port;
 };
 
 module.exports = Server;
