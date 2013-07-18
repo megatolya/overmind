@@ -41,15 +41,17 @@ function Server(logic, params) {
 
     /**
      * link to overmind
-     * @type {Object}
+     * @type {Overmind}
      */
     this.overmind = params.overmind;
 
+    /**
+     * alias for this.overmind.logger
+     * @type {Object}
+     */
     this.logger = this.overmind.logger;
 
     params.views && this.views(params.views);
-
-    // TODO view path
 }
 
 /**
@@ -79,7 +81,35 @@ Server.prototype.start = function(evh) {
                     handleError(err);
                     return;
                 }
-                html = header + html;
+
+                var match,
+                    i18nReg= /%{2}([a-zA-Z0-9]+)%{2}/g,
+                    placeholdersReg = /%{2}\$(.*)%{2}/g;
+
+                // TODO i18n storage
+                function translate(str) {
+                    _this.logger.debug('translating ' + str.underline);
+                    return str;
+                }
+
+                // TODO placeholder storage?
+                function getPlaceholder(placeholder) {
+                    _this.logger.debug('replacing placeholder ' + placeholder.underline);
+                    switch (placeholder) {
+                        case 'header_menu':
+                            return header;
+                        default:
+                            return '<b>placeholder not found</b>';
+                    }
+                }
+
+                while(match = i18nReg.exec(html)) {
+                    html = html.replace(new RegExp(match[0], 'g'), translate(match[1]));
+                }
+
+                while(match = placeholdersReg.exec(html)) {
+                    html = html.replace(match[0], getPlaceholder(match[1]));
+                }
                 fn(err, html);
             });
         });
