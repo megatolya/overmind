@@ -1,5 +1,10 @@
+/**
+ * dependencies
+ */
 var Server = require('./server'),
-    logger = require('./logger')(10);
+    Storage = require('./storage'),
+    logger = require('./logger')(10),
+    path = require('path');
 
 /**
  * Default port
@@ -9,14 +14,18 @@ var Server = require('./server'),
 var DEFAULT_PORT = 3000;
 
 /**
+ * Default storages' path
+ * @const
+ * @type {string}
+ */
+var DEFAULT_STORAGE_PATH = path.resolve(path.join(__dirname, './storage'));
+
+/**
  * @name Overmind
  * @constructor
- * @this {Overmind}
- * @return @this
+ * @return {Overmind}
  */
 function Overmind() {
-    var path = require('path');
-
     this._servers = [];
     this.headerFile = path.join(__dirname, 'header.jade');
     this._cache = {};
@@ -32,14 +41,15 @@ function Overmind() {
      */
     this._logLevel = 10;
     this.logger = require('./logger')(this._logLevel);
+    this._port = DEFAULT_PORT;
+    this._storagePath = DEFAULT_STORAGE_PATH;
 
     return this;
 }
 
 /**
  * Start all servers
- * @this {Overmind}
- * @return @this
+ * @return {Overmind}
  */
 Overmind.prototype.start = function() {
     var _this = this,
@@ -47,11 +57,19 @@ Overmind.prototype.start = function() {
         evh = require('express-vhost');
 
     server.use(evh.vhost());
-    server.listen(this._port || DEFAULT_PORT);
+    server.listen(this._port);
+    // creating new storage
+    this.storage = new Storage('overmind', this._storagePath);
+    // creating servers
     this.logger.trace('starting servers');
     this._servers.forEach(function(server) {
         _this.logger.info('starting server ' + server.name.underline);
         server.start(evh);
+        _this.logger.info(
+            server.name.underline +
+            ' can be reached by address '+
+            ('http://' + server.hostname + ':' + _this.port()).underline.bold
+        );
     });
 
     return this;
@@ -69,8 +87,7 @@ Overmind.prototype.getServers = function() {
  * Declare server
  * @param {function(Server)} logic (see server's constructor)
  * @param {(Object|undefined)} params (see Server's constructor)
- * @this {Overmind}
- * @return @this
+ * @return {Overmind}
  */
 Overmind.prototype.addServer = function(logic, params) {
     params = params || {};
@@ -115,23 +132,60 @@ Overmind.prototype.getHeader = function(callback) {
 /**
  * Overriding default port for servers
  * @param {number} port new port
- * @this {Overmind}
- * @return @this
+ * @return {Overmind}
  */
 Overmind.prototype.port = function(port) {
+    if (!port)
+        return this._port;
+
     this._port = port;
 
     return this;
 };
 
 /**
+ * Overriding default path for servers's storage
+ */
+Overmind.prototype.storagePath = function(path) {
+    if (!arguments.length)
+        return this._storagePath;
+
+    // TODO check old storage and replace it
+    this._storagePath = path;
+};
+
+/**
  * Change logging level
- * @this {Overmind}
- * @return @this
+ * @param {number} logLevel new log level value (10-50)
+ * @return {Overmind}
  */
 Overmind.prototype.loglevel = function(logLevel) {
+    if (!logLevel)
+        return this.logLevel;
+
     this._logLevel = logLevel;
     this.logger = require('./logger')(this._logLevel);
+    return this;
+};
+
+/**
+ * Overmind options
+ * @param {object} options port, logLevel, storagePath, etc
+ * @return {Overmind}
+ */
+Overmind.prototype.setOptions = function(options) {
+    if (typeof options === 'object' && !(options instanceof Array)) {
+        for (var key in options) {
+            var opt = options[key];
+
+            if (this[key] && (typeof this[key] === 'function'))
+                this[key](opt);
+            else
+                this.logger.error('no method found for key ' + key.underline);
+        }
+    } else {
+        this.logger.error('setOptions\'s param should be object');
+    }
     return this;
 };
 

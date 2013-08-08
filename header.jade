@@ -1,8 +1,8 @@
 div.navbar
-    div.navbar-inner
-        a.brand='Title'
-            ul.nav
-                - servers.forEach(function(server) {
-                    li
-                        a(href=server.hostname)=server.name
-                - });
+    a.navbar-brand=''
+    ul.nav.navbar-nav
+        - servers.forEach(function(server) {
+            li
+                // FIXME
+                a(href=server.hostname)=server.name
+        - });

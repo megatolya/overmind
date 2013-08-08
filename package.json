@@ -8,7 +8,10 @@
     "jade": "0.28.1",
     "colors": "~0.6.0-1",
     "nodejs-microdb": "0.0.2",
-    "express-vhost": "~0.1.0"
+    "express-vhost": "~0.1.0",
+    "mkdirp": "~0.3.5",
+    "glob": "~3.2.6",
+    "fs-extra": "~0.6.3"
   },
   "main": "overmind.js"
 }

@@ -22,8 +22,6 @@ function Server(logic, params) {
     /**
      * server's hostname
      * @type {string}
-     * for example: "test.localhost", "ololo.ololo.com"
-     * TODO @type {Array}
      */
     this.hostname = params.hostname;
 
@@ -68,6 +66,8 @@ Server.prototype.start = function(evh) {
     var express = require('express'),
         view = require('express/lib/view'),
         _this = this;
+
+    // @todo use this._storagePath
 
     // replace render fn
     view.prototype.render = function(options, fn) {
@@ -115,11 +115,13 @@ Server.prototype.start = function(evh) {
         });
     };
 
+    // rename express to app?
     this.express = express();
     this.express.set('view', view);
 
     // TODO more engines
     this.express.set('view engine', 'jade');
+    this.express.use(express.bodyParser())
 
     // calling server's logic
     this.logic(this);
@@ -129,7 +131,7 @@ Server.prototype.start = function(evh) {
 
 /**
  * Declare server's view path
- * @param {string} path
+ * @param {string} path path to views
  * @api public
  */
 Server.prototype.views = function(path) {
